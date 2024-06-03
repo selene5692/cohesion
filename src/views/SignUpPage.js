@@ -30,7 +30,7 @@ export default function SignUpPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <a href="/login">Have an existing account? Login here.</a>
+          <a href="/login">Have an existing account? Login here thank you.</a>
         </Form.Group>
         <Button variant="primary">Sign Up</Button>
       </Form>
