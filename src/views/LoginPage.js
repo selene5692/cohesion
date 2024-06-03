@@ -57,7 +57,7 @@ export default function LoginPage() {
         </Button>
 
       </Form>
-      <p>error</p>
+      <p>{error}</p>
     </Container>
   );
 }
