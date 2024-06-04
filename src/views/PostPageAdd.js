@@ -1,13 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { Button, Container, Form, Nav, Navbar } from "react-bootstrap";
+import { addDoc, collection } from "firebase/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useNavigate } from "react-router-dom";
+import { auth, db, storage } from "../firebase";
+import { signOut } from "firebase/auth";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+
 
 export default function PostPageAdd() {
-  const [caption, setCaption] = useState("");
-  const [image, setImage] = useState("");
+    const [user, loading] = useAuthState(auth);
+    const [caption, setCaption] = useState("");
+    const [image, setImage] = useState("");
+    const navigate = useNavigate();  
 
-  async function addPost() {}
+    async function addPost() {
+        const imageReference = ref(storage, `images/${image.name}`);
+        const response = await uploadBytes(imageReference, image);
+        const imageUrl = await getDownloadURL(response.ref);
+        await addDoc(collection(db, "posts"), { caption, image: imageUrl });
+        navigate("/");
+      }    
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (loading) return;
+    if (!user) return navigate("/login");
+  }, [navigate, user, loading]);
 
   return (
     <>
@@ -16,7 +34,7 @@ export default function PostPageAdd() {
           <Navbar.Brand href="/">Tinkergram</Navbar.Brand>
           <Nav>
             <Nav.Link href="/add">New Post</Nav.Link>
-            <Nav.Link href="/add">🚪</Nav.Link>
+            <Nav.Link onClick={(e) => signOut(auth)}>🚪</Nav.Link>
           </Nav>
         </Container>
       </Navbar>
@@ -34,12 +52,10 @@ export default function PostPageAdd() {
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="image">
-            <Form.Label>Image URL</Form.Label>
+            <Form.Label>Image</Form.Label>
             <Form.Control
-              type="text"
-              placeholder="https://zca.sg/img/1"
-              value={image}
-              onChange={(text) => setImage(text.target.value)}
+              type="file"
+              onChange={(e) => setImage(e.target.files[0])}
             />
             <Form.Text className="text-muted">
               Make sure the url has a image type at the end: jpg, jpeg, png.
