@@ -8,7 +8,8 @@ import Navigation from "../components/Navigation"
 
 
 export default function PostPageDetails() {
-  const [caption, setCaption] = useState("");
+  const [activity, setActivity] = useState("");
+  const [details, setDetails] = useState("");
   const [image, setImage] = useState("");
   const params = useParams();
   const id = params.id;
@@ -24,7 +25,8 @@ export default function PostPageDetails() {
   async function getPost(id) {
     const postDocument = await getDoc(doc(db, "posts", id));
     const post = postDocument.data();
-    setCaption(post.caption);
+    setActivity(post.activity);
+    setDetails(post.details);
     setImage(post.image);
   }
 
@@ -46,7 +48,10 @@ export default function PostPageDetails() {
           <Col>
             <Card>
               <Card.Body>
-                <Card.Text>{caption}</Card.Text>
+                <h3>Activity:</h3>
+                <Card.Text>{activity}</Card.Text>
+                <h3>Details:</h3>
+                <div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{details}</div>
                 <Card.Link href={`/update/${id}`}>Edit</Card.Link>
                 <Card.Link
                   onClick={() => deletePost(id)}

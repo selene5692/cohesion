@@ -10,7 +10,8 @@ import Navigation from "../components/Navigation"
 export default function PostPageUpdate() {
   const params = useParams();
   const id = params.id;
-  const [caption, setCaption] = useState("");
+  const [activity, setCaption] = useState("");
+  const [details, setDetails] = useState("");
   const [image, setImage] = useState("");
   const [previewImage, setPreviewImage] = useState(
     "https://zca.sg/img/placeholder"
@@ -23,7 +24,7 @@ export default function PostPageUpdate() {
     const imageReference = ref(storage, `images/${image.name}`);
     const response = await uploadBytes(imageReference, image);
     const imageUrl = await getDownloadURL(response.ref);
-    await updateDoc(doc(db, "posts", id), { caption, image: imageUrl });
+    await updateDoc(doc(db, "posts", id), { activity, details, image: imageUrl });
     navigate("/");
   }
 
@@ -31,7 +32,8 @@ export default function PostPageUpdate() {
   async function getPost(id) {
     const postDocument = await getDoc(doc(db, "posts", id));
     const post = postDocument.data();
-    setCaption(post.caption);
+    setCaption(post.activity);
+    setDetails(post.details);
     setImage(post.image);
     setPreviewImage(post.image);
   }
@@ -54,10 +56,22 @@ export default function PostPageUpdate() {
             <Form.Control
               type="text"
               placeholder="Lovely day"
-              value={caption}
+              value={activity}
               onChange={(text) => setCaption(text.target.value)}
             />
           </Form.Group>
+
+          <Form.Group className="mb-3" controlId="caption">
+            <Form.Label>Details</Form.Label>
+            <Form.Control
+              as="textarea" 
+              rows={5}
+              placeholder="Describe the activity here"
+              value={details}
+              onChange={(text) => setDetails(text.target.value)}
+            />
+          </Form.Group>
+          
           <Image
             src={previewImage}
             style={{

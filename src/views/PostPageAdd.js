@@ -10,7 +10,8 @@ import { useNavigate } from "react-router-dom";
 
 export default function PostPageAdd() {
     const [user, loading] = useAuthState(auth);
-    const [caption, setCaption] = useState("");
+    const [activity, setActivity] = useState("");
+    const [details, setDetails] = useState("");
     const [image, setImage] = useState("");
     const navigate = useNavigate();  
 
@@ -18,7 +19,7 @@ export default function PostPageAdd() {
         const imageReference = ref(storage, `images/${image.name}`);
         const response = await uploadBytes(imageReference, image);
         const imageUrl = await getDownloadURL(response.ref);
-        await addDoc(collection(db, "posts"), { caption, image: imageUrl });
+        await addDoc(collection(db, "posts"), { activity, details, image: imageUrl });
         navigate("/");
       }    
 
@@ -31,15 +32,26 @@ export default function PostPageAdd() {
     <>
       <Navigation />
       <Container>
-        <h1 style={{ marginBlock: "1rem" }}>Add Post</h1>
+        <h1 style={{ marginBlock: "1rem" }}>Suggest an Activity!</h1>
         <Form>
           <Form.Group className="mb-3" controlId="caption">
-            <Form.Label>Caption</Form.Label>
+            <Form.Label>Activity:</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Lovely day"
-              value={caption}
-              onChange={(text) => setCaption(text.target.value)}
+              placeholder="Activity name"
+              value={activity}
+              onChange={(text) => setActivity(text.target.value)}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3" controlId="caption">
+            <Form.Label>Details</Form.Label>
+            <Form.Control
+              as="textarea" 
+              rows={5}
+              placeholder="Describe the activity here"
+              value={details}
+              onChange={(text) => setDetails(text.target.value)}
             />
           </Form.Group>
 
