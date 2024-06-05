@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Card, Col, Container, Image, Nav, Navbar, Row } from "react-bootstrap";
+import { Card, Col, Container, Image, Row } from "react-bootstrap";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate, useParams } from "react-router-dom";
 import { auth, db } from "../firebase";
-import { signOut } from "firebase/auth";
 import { deleteDoc, doc, getDoc } from "firebase/firestore";
+import Navigation from "../components/Navigation"
 
 
 export default function PostPageDetails() {
@@ -37,15 +37,7 @@ export default function PostPageDetails() {
 
   return (
     <>
-      <Navbar variant="light" bg="light">
-        <Container>
-          <Navbar.Brand href="/">Tinkergram</Navbar.Brand>
-          <Nav>
-            <Nav.Link href="/add">New Post</Nav.Link>
-            <Nav.Link onClick={(e) => signOut(auth)}>🚪</Nav.Link>
-          </Nav>
-        </Container>
-      </Navbar>
+      <Navigation />
       <Container>
         <Row style={{ marginTop: "2rem" }}>
           <Col md="6">
