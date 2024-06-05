@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Container, Image, Row } from "react-bootstrap";
+import { Card, Container, Image, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
-import Navigation from "../components/Navigation"
-
+import Navigation from "../components/Navigation";
+import ThumbsUpButton from "../components/ThumbsUpButton"
 
 export default function PostPageHome() {
   const [posts, setPosts] = useState([]);
@@ -38,24 +38,44 @@ export default function PostPageHome() {
 }
 
 function ImageSquare({ post }) {
-  const { image, id } = post;
+  const { activity, image, likes, id } = post;
+  // const thumbsUpCount = {likes}; // Placeholder count
+  const handleThumbsUpPress = () => {
+    alert('Please read the details before liking the post!');
+  };
+  
   return (
-    <Link
-      to={`post/${id}`}
-      style={{
-        width: "18rem",
-        marginLeft: "1rem",
-        marginTop: "2rem",
-      }}
-    >
-      <Image
-        src={image}
+    <Card style={{ width: "18rem", margin: "auto" }}> {/* Adjusted Card width and centered */}
+      <Link
+        to={`post/${id}`}
         style={{
-          objectFit: "cover",
-          width: "18rem",
-          height: "18rem",
+          width: "100%", // Ensure Link fills the Card width
+          display: "inline-block", // Make Link behave like a block element for margin
+          marginLeft: "2px", // Add left margin
+          marginTop: "1rem",
         }}
-      />
-    </Link>
+      >
+        <Image
+          src={image}
+          style={{
+            objectFit: "cover",
+            width: "100%", // Match Image width to Card width
+            height: "18rem",
+            borderRadius: "2px", // Optional: Adds rounded corners to the image
+          }}
+        />
+      </Link>
+      <p
+        style={{
+          width: "18rem",
+          marginLeft: "2px", // Align with the Image margin
+          marginTop: "1rem",
+          fontWeight: "bold"
+        }}
+      >
+        {activity}
+      </p>
+      <ThumbsUpButton count={likes} onPress={() => handleThumbsUpPress()} />
+    </Card>
   );
 }

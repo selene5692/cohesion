@@ -3,20 +3,28 @@ import { Card, Col, Container, Image, Row } from "react-bootstrap";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate, useParams } from "react-router-dom";
 import { auth, db } from "../firebase";
-import { deleteDoc, doc, getDoc } from "firebase/firestore";
+import { deleteDoc, doc, getDoc, updateDoc, increment } from "firebase/firestore";
 import Navigation from "../components/Navigation"
+import ThumbsUpButton from "../components/ThumbsUpButton"
 
 
 export default function PostPageDetails() {
   const [activity, setActivity] = useState("");
   const [details, setDetails] = useState("");
   const [image, setImage] = useState("");
+  const [likes, setLikes] = useState("");
   const params = useParams();
   const id = params.id;
   const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
+  
 
-
+  async function likePost(id) {
+    const postRef = doc(db, "posts", id);
+    await updateDoc(postRef, { likes: increment(1) });
+    setLikes(likes + 1); // Update local state to reflect the increment
+  }
+  
   async function deletePost(id) {
     await deleteDoc(doc(db, "posts", id));
     navigate("/");
@@ -27,6 +35,7 @@ export default function PostPageDetails() {
     const post = postDocument.data();
     setActivity(post.activity);
     setDetails(post.details);
+    setLikes(post.likes);
     setImage(post.image);
   }
 
@@ -44,6 +53,7 @@ export default function PostPageDetails() {
         <Row style={{ marginTop: "2rem" }}>
           <Col md="6">
             <Image src={image} style={{ width: "100%" }} />
+            <ThumbsUpButton count={likes} onPress={() => likePost(id)} />
           </Col>
           <Col>
             <Card>
