@@ -10,7 +10,6 @@ export default function Navigation() {
   async function handleSignOut() {
     try {
       await signOut(auth);
-      // Redirect to the login page after successful sign-out
       navigate('/login');
     } catch (error) {
       console.error('Error signing out:', error);

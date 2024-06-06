@@ -1,12 +1,60 @@
-import React from 'react';
-import { IonIcon } from '@ionic/react'; // Assuming you're using Ionic for the Ionicons
-import { thumbsUpOutline } from 'ionicons/icons';
+import React, { useEffect, useState } from 'react';
+import { IonIcon } from '@ionic/react';
+import { thumbsUpOutline, thumbsUp } from 'ionicons/icons';
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth, db } from "../firebase";
+import { useNavigate } from "react-router-dom";
+import { doc, getDoc, updateDoc, increment } from "firebase/firestore";
 
-const ThumbsUpButton = ({ count, onPress }) => {
+const ThumbsUpButton = ({ id, initialLikes }) => {
+  const [isPressed, setIsPressed] = useState(false);
+  const [likes, setLikes] = useState(initialLikes);
+  const [user, loading] = useAuthState(auth);
+  const navigate = useNavigate();
+
+  async function getPost(id) {
+    try {
+      const postDocument = await getDoc(doc(db, "posts", id));
+      if (postDocument.exists()) {
+        const post = postDocument.data();
+        setLikes(post.likes);
+      }
+    } catch (error) {
+      console.error("Error fetching post: ", error);
+    }
+  }
+
+  async function toggleLikePost() {
+    const postRef = doc(db, "posts", id);
+
+    try {
+      if (isPressed) {
+        await updateDoc(postRef, {
+          likes: increment(-1)
+        });
+        setLikes((prevLikes) => prevLikes - 1);
+      } else {
+        await updateDoc(postRef, {
+          likes: increment(1)
+        });
+        setLikes((prevLikes) => prevLikes + 1);
+      }
+      setIsPressed(!isPressed);
+    } catch (error) {
+      console.error("Error updating like count: ", error);
+    }
+  }
+
+  useEffect(() => {
+    if (loading) return;
+    if (!user) navigate("/login");
+    getPost(id);
+  }, [id, navigate, user, loading]);
+
   return (
-    <div style={styles.buttonContainer} onClick={onPress}>
-      <span style={styles.placeholder}>{count}</span>
-      <IonIcon icon={thumbsUpOutline} size={24} color="green" />
+    <div style={styles.buttonContainer} onClick={toggleLikePost}>
+      <span style={styles.placeholder}>{likes}</span>
+      <IonIcon icon={isPressed ? thumbsUp : thumbsUpOutline} size={24} color="green" />
     </div>
   );
 };
@@ -16,14 +64,14 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff', // Background color to match the card
-    borderRadius: '50%', // Makes the container circular
-    padding: '8px', // Padding inside the button
-    cursor: 'pointer', // Indicates the div is clickable
+    backgroundColor: '#fff',
+    borderRadius: '50%',
+    padding: '8px',
+    cursor: 'pointer',
   },
   placeholder: {
-    marginRight: '8px', // Space between the placeholder and the icon
-    fontSize: '14px', // Placeholder text size
+    marginRight: '8px',
+    fontSize: '14px',
   },
 };
 

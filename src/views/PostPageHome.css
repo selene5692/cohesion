@@ -1,0 +1,17 @@
+/* Custom CSS for PostPageHome component */
+
+.horizontal-scroll {
+    display: flex;
+    justify-content: center;
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: auto;
+    padding: 1rem 0;
+  }
+  
+  .horizontal-scroll::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for better UI */
+  }
+  
+  .horizontal-scroll > * {
+    flex: 0 0 auto; /* Ensure items do not shrink */
+  }
