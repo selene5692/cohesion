@@ -40,6 +40,7 @@ export default function PostPageHome() {
         <Row className="justify-content-center my-3">
           {topPost && <ImageSquare post={topPost} isTop />}
         </Row>
+        <h2 className="text-center my-3">Check Out Other Suggestions:</h2>
         <Row className="horizontal-scroll">
           <RemainingPostsRow />
         </Row>
@@ -52,13 +53,12 @@ function ImageSquare({ post, isTop }) {
   const { activity, image, id, likes } = post;
 
   return (
-    <Card style={{ width: isTop ? "24rem" : "12rem", margin: "1rem" }}>
+    <Card style={{ width: isTop ? "24rem" : "16rem", margin: "1rem" }}>
       <Link
         to={`post/${id}`}
         style={{
           width: "100%",
           display: "inline-block",
-          marginLeft: "2px",
           marginTop: "1rem",
         }}
       >
@@ -67,17 +67,18 @@ function ImageSquare({ post, isTop }) {
           style={{
             objectFit: "cover",
             width: "100%",
-            height: isTop ? "24rem" : "12rem",
+            height: isTop ? "24rem" : "16rem",
             borderRadius: "2px",
           }}
         />
       </Link>
       <p
+        className="text-center my-3"
         style={{
-          width: isTop ? "24rem" : "12rem",
-          marginLeft: "2px",
+          width: isTop ? "24rem" : "14rem",
           marginTop: "1rem",
-          fontWeight: "bold"
+          fontWeight: "bold",
+          wordWrap: "break-word"
         }}
       >
         {activity}
